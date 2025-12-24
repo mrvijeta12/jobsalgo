@@ -1,0 +1,259 @@
+.form-control:hover,
+.form-control:active,
+.form-control:focus,
+.form-select:focus {
+  border: 1px solid rgba(33, 37, 41, 0.75);
+}
+
+.admin_toggler_btn {
+  border: 1px solid white !important;
+  color: white !important;
+  background-color: transparent !important;
+}
+
+.admin_toggler_btn:focus,
+.admin_toggler_btn:active,
+.admin_toggler_btn:hover,
+.admin_toggler_btn:focus-visible {
+  border: 1px solid white !important;
+  color: white !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+}
+
+.sidebar {
+  width: 250px;
+  z-index: 1040;
+  /* top: 70px; */
+  left: 0;
+  padding-top: 80px;
+  /* margin-top: 70px; */
+  transition: transform 0.3s ease;
+  transform: translateX(0); /* visible */
+}
+.sidebar_toggler {
+  /* border: 2px solid red; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sidebar_toggler svg {
+  color: black;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.icon {
+  /* border: 2px solid black; */
+  margin-right: 15px;
+  background-color: #777;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+.admin_card {
+  height: 100%;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+.admin_card_body {
+  padding: 20px;
+  height: 100%;
+}
+.bg_active {
+  background-color: #abc4ff;
+  color: black;
+  font-weight: 700;
+}
+.bg_active:hover {
+  background-color: #abc4ff;
+  color: black;
+}
+.sidebar.hidden {
+  transform: translateX(-100%);
+}
+.dynamic_margin {
+  margin-left: 270px;
+  /* margin-top: 90px; */
+}
+
+@media (max-width: 992px) {
+  .sidebar.hidden {
+    transform: translateX(-100%);
+  }
+
+  /* .dynamic_margin {
+    margin-left: 0px;
+  } */
+}
+
+/* == authuser ==  */
+.auth_container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: 2px solid red; */
+  /* background-color: red; */
+}
+
+.sign_in_form {
+  /* border: 2px solid black; */
+  width: 400px;
+  padding: 50px 20px;
+  padding-bottom: 100px;
+
+  background-color: #fff;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+@media screen and (max-width: 450px) {
+  .sign_in_form {
+    width: 350px;
+  }
+}
+.auth_container .title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.auth_container .input_wrapper {
+  border: 1px solid #ebeced;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  padding: 6px 12px;
+}
+.auth_container .input_wrapper .input_field {
+  display: flex;
+  align-items: center;
+}
+.auth_container .input_wrapper .input_field input {
+  background-color: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  color: black;
+  width: 100%;
+  font: inherit;
+  padding: 8px 12px;
+  appearance: none; /* removes native styling */
+}
+
+/* Optional: remove autofill background in Chrome/Safari */
+.auth_container .input_wrapper .input_field input:-webkit-autofill,
+.auth_container .input_wrapper .input_field input:-webkit-autofill:hover,
+.auth_container .input_wrapper .input_field input:-webkit-autofill:focus,
+.auth_container .input_wrapper .input_field input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0px 1000px #fff inset !important; /* background */
+  box-shadow: 0 0 0px 1000px #fff inset !important;
+  -webkit-text-fill-color: #000 !important; /* text color */
+  caret-color: black; /* cursor color */
+  background-image: none !important;
+  background-clip: content-box !important;
+  border: none !important;
+}
+
+/* Remove Bootstrap .form-control default styles */
+.auth_container .input_wrapper .input_field .form-control:focus,
+.auth_container .input_wrapper .input_field .form-control:hover,
+.auth_container .input_wrapper .input_field .form-control:active {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.form-control:hover,
+.form-control:active,
+.form-control:focus,
+.form-select:focus {
+  border: 1px solid rgba(33, 37, 41, 0.75);
+}
+
+/*  main and header  */
+
+.admin_login_btn {
+  width: 100%;
+  padding: 8px 16px;
+  background-color: #0d6efd;
+  color: white;
+  font-weight: 600;
+}
+.admin_login_btn:hover {
+  color: white;
+  background-color: #0066ff;
+}
+
+/* global btn  */
+.global_btn {
+  background-color: #abc4ff;
+  color: black;
+  font-weight: 500;
+}
+.global_btn:hover {
+  background-color: #6b94f5;
+  color: black;
+  font-weight: 500;
+}
+
+/* chart  */
+
+.recharts-wrapper:focus {
+  outline: 2px solid transparent;
+  outline-offset: 0;
+}
+svg:focus,
+.recharts-surface:focus {
+  outline: none !important;
+}
+
+/* dashboard  */
+.dash_icon_wrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+/* employer list dropdown */
+
+.admin_action_btn:hover {
+  background-color: #abc4ff;
+}
+
+/* notification */
+.notification {
+  top: 75px;
+  right: 14px;
+  min-width: 320px;
+  z-index: 9999;
+  background: white;
+  overflow: hidden;
+}
+@media screen and (max-width: 992px) {
+  .notification {
+    top: 75px;
+    left: 50%;
+    transform: translate(-50%);
+  }
+}
+
+/* company logo   */
+.company_logo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: "e5e5e5";
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 15px;
+  border: 1px solid #ced4da;
+}
+
+/* skill input  */
+.SkillsInput {
+  background-color: #3c3c3c !important;
+  font-size: 16px;
+}
