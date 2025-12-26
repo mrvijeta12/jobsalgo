@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getPublicJobById } from "../Utils/frontendJobs";
-import { Helmet } from "react-helmet-async";
 
 const JobDescription = () => {
+  useEffect(() => {
+    document.title = "JobsAlgo | Job Description";
+  }, []);
   const navigate = useNavigate();
   const { id } = useParams();
   const [job, setJob] = useState(null);
@@ -15,6 +17,25 @@ const JobDescription = () => {
 
   const capitalize = (text) =>
     text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
+  // Helper function
+  const formatSalary = (min, max) => {
+    if (!min && !max) return "Not disclosed";
+
+    const formatValue = (value) => {
+      if (value >= 100) {
+        // Convert LPA to Cr
+        return `${(value / 100).toFixed(2)} Cr`;
+      }
+      return `${value} LPA`;
+    };
+
+    // If min & max are equal → show single value
+    if (min === max) {
+      return formatValue(max);
+    }
+
+    return `${formatValue(min)} - ${formatValue(max)}`;
+  };
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -38,9 +59,6 @@ const JobDescription = () => {
 
   return (
     <>
-      <Helmet>
-        <title>JobsAlgo | Job Description</title>
-      </Helmet>
       <div className="site-wrap">
         <div className="site-mobile-menu site-navbar-target">
           <div className="site-mobile-menu-header">
@@ -381,7 +399,7 @@ const JobDescription = () => {
                     </li>
                     <li className="mb-2">
                       <strong className="text-black">Salary:</strong>{" "}
-                      {job.salary} INR/year
+                      {formatSalary(job.minSalary, job.maxSalary)}
                     </li>
                     <li className="mb-2">
                       <strong className="text-black">Gender:</strong> Any

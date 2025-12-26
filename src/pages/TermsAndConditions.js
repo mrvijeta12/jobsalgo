@@ -1,12 +1,11 @@
-import React from "react";
-import { Helmet } from "react-helmet-async";
+import React, { useEffect } from "react";
 
 const TermsAndConditions = () => {
+  useEffect(() => {
+    document.title = "JobsAlgo | Terms & Conditions";
+  }, []);
   return (
     <>
-      <Helmet>
-        <title>JobsAlgo | Terms & Conditions</title>
-      </Helmet>
       <div className="site-wrap">
         <div className="site-mobile-menu site-navbar-target">
           <div className="site-mobile-menu-header">

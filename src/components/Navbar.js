@@ -148,12 +148,12 @@ const Navbar = () => {
               </li>
               <li>
                 <NavLink
-                  to="/blog"
+                  to="/blogs"
                   className={({ isActive }) =>
                     isActive ? "nav-link active" : "nav-link"
                   }
                 >
-                  Blog
+                  Blogs
                 </NavLink>
               </li>
               <li>

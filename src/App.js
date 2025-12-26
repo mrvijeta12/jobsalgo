@@ -24,13 +24,14 @@ import JobSingle from "./pages/JobDescription.js";
 import PostJob from "./pages/PostJob";
 import Services from "./pages/Services";
 import ServiceSingle from "./pages/ServiceSingle";
-import Blog from "./pages/Blog";
+
 import BlogSingle from "./pages/BlogSingle";
 import Testimonials from "./pages/Testimonials";
 import FAQ from "./pages/FAQ";
 import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
+import Blogs from "./pages/Blogs.js";
 
 // BACKEND ADMIN
 import ProtectedRoute from "./admin/Routes/ProtectedRoute.js";
@@ -100,7 +101,7 @@ function App() {
           <Route path="post-job" element={<PostJob />} />
           <Route path="services" element={<Services />} />
           <Route path="service-single" element={<ServiceSingle />} />
-          <Route path="blog" element={<Blog />} />
+          <Route path="blogs" element={<Blogs />} />
           <Route path="blog-single" element={<BlogSingle />} />
           <Route path="testimonials" element={<Testimonials />} />
           <Route path="faq" element={<FAQ />} />

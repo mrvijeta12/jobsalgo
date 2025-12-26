@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { CiCircleCheck } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 
 const About = () => {
+  useEffect(() => {
+    document.title = "JobsAlgo | About Us";
+  }, []);
   const navigate = useNavigate();
   return (
     <>
-      <Helmet>
-        <title>JobsAlgo | About Us</title>
-      </Helmet>
       <div className="site-wrap">
         <div className="site-mobile-menu site-navbar-target">
           <div className="site-mobile-menu-header">

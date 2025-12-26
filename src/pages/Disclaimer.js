@@ -1,12 +1,11 @@
-import React from "react";
-import { Helmet } from "react-helmet-async";
+import React, { useEffect } from "react";
 
 const Disclaimer = () => {
+  useEffect(() => {
+    document.title = "JobsAlgo | Disclaimer";
+  }, []);
   return (
     <>
-      <Helmet>
-        <title>JobsAlgo | Disclaimer</title>
-      </Helmet>
       <div className="site-wrap">
         <div className="site-mobile-menu site-navbar-target">
           <div className="site-mobile-menu-header">

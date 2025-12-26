@@ -14,6 +14,9 @@ const Input = React.forwardRef(
       required = false,
       checked,
       readOnly = false,
+      min = "",
+      max = "",
+      step = "",
     },
     ref
   ) => {
@@ -36,6 +39,9 @@ const Input = React.forwardRef(
         className={`${baseClass} ${className}`}
         required={required}
         readOnly={readOnly}
+        min={min}
+        max={max}
+        step={step}
       />
     );
   }

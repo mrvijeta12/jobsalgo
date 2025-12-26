@@ -5,9 +5,12 @@ import { validate } from "../admin/Utils/Validate";
 import { sendMail } from "../Utils/frontendAuth";
 import Notification from "../admin/Components/Notification";
 import ReCAPTCHA from "react-google-recaptcha";
-import { Helmet } from "react-helmet-async";
 
 const Contact = () => {
+  useEffect(() => {
+    document.title = "JobsAlgo | Contact Us";
+  }, []);
+
   const { notif, setNotif, errors, setErrors } = useContext(FrontendContext);
 
   const [formData, setFormData] = useState({
@@ -154,9 +157,6 @@ const Contact = () => {
 
   return (
     <>
-      <Helmet>
-        <title>JobsAlgo | Contact Us</title>
-      </Helmet>
       {notif.message && (
         <Notification
           key={notif.id}

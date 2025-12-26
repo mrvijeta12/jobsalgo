@@ -1,15 +1,14 @@
-import React from "react";
-import { Helmet } from "react-helmet-async";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-const Blog = () => {
+const Blogs = () => {
+  useEffect(() => {
+    document.title = "JobsAlgo | Blogs";
+  }, []);
   const navigate = useNavigate();
   return (
     <>
-      <Helmet>
-        <title>JobsAlgo | Blogs</title>
-      </Helmet>
       <div className="site-wrap">
         <div className="site-mobile-menu site-navbar-target">
           <div className="site-mobile-menu-header">
@@ -28,7 +27,7 @@ const Blog = () => {
         <div className="container">
           <div className="row">
             <div className="col-md-7" data-aos="fade-up" data-aos-delay="200">
-              <h1 className="text-white font-weight-bold">Our Blog</h1>
+              <h1 className="text-white font-weight-bold">Our Blogs</h1>
               <div className="custom-breadcrumbs">
                 <Link href="#">Home</Link> <span className="mx-2 slash">/</span>
                 <span className="text-white">
@@ -227,4 +226,4 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default Blogs;

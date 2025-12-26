@@ -1,15 +1,15 @@
-import React from "react";
-import { Helmet } from "react-helmet-async";
+import React, { useEffect } from "react";
+
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 const Services = () => {
+  useEffect(() => {
+    document.title = "JobsAlgo | Services";
+  }, []);
   const navigate = useNavigate();
   return (
     <>
-      <Helmet>
-        <title>JobsAlgo | Services</title>
-      </Helmet>
       <div className="site-wrap">
         <div className="site-mobile-menu site-navbar-target">
           <div className="site-mobile-menu-header">

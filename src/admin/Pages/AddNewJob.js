@@ -38,7 +38,8 @@ const AddNewJob = () => {
     job_type: useRef(),
     category: useRef(),
     location: useRef(),
-    salary: useRef(),
+    minSalary: useRef(),
+    maxSalary: useRef(),
     experience: useRef(),
     number_of_openings: useRef(),
     application_deadline: useRef(),
@@ -56,7 +57,8 @@ const AddNewJob = () => {
     job_type: "",
     category: "",
     location: "",
-    salary: "",
+    minSalary: "",
+    maxSalary: "",
     experience: "",
     number_of_openings: "1",
     application_deadline: "",
@@ -133,7 +135,21 @@ const AddNewJob = () => {
       },
     ],
 
-    salary: [{ required: true, message: "Please select salary range." }],
+    minSalary: [{ required: true, message: "This fields can't be empty." }],
+    maxSalary: [
+      { required: true, message: "This fields can't be empty." },
+      {
+        custom: (value, jobFormData) => {
+          let min = parseFloat(jobFormData.minSalary);
+          let max = parseFloat(value);
+          if (isNaN(min) || isNaN(max)) return true;
+          return max >= min;
+        },
+        message:
+          "Maximum salary must be greater than or equal to minimum salary.",
+      },
+    ],
+
     experience: [{ required: true, message: "This fields can't be empty." }],
     number_of_openings: [
       { required: true, message: "This fields can't be empty." },
@@ -148,7 +164,7 @@ const AddNewJob = () => {
     skills: [
       {
         custom: (value) => Array.isArray(value) && value.length > 0,
-        message: "Skill is required.",
+        message: "This fields can't be empty.",
       },
     ],
 
@@ -174,7 +190,8 @@ const AddNewJob = () => {
         job_type: validationConfig.job_type,
         category: validationConfig.category,
         location: validationConfig.location,
-        salary: validationConfig.salary,
+        minSalary: validationConfig.minSalary,
+        maxSalary: validationConfig.maxSalary,
         experience: validationConfig.experience,
         number_of_openings: validationConfig.number_of_openings,
         application_deadline: validationConfig.application_deadline,
@@ -215,6 +232,8 @@ const AddNewJob = () => {
       // refs[firstErrorKey]?.current?.focus?.();
       return;
     }
+    console.log(jobFormData);
+
     try {
       setLoading(true);
       const res = await addJob(jobFormData, token, selectEmployerId);
@@ -435,18 +454,39 @@ const AddNewJob = () => {
                 )}
               </div>
               <div className="col-md-4 mb-2">
-                <label className="form-label">Salary Range*</label>
+                <label className="form-label">Minimun Salary*</label>
                 <Input
-                  ref={refs.salary}
-                  type="text"
+                  ref={refs.minSalary}
                   className="form-control"
-                  placeholder="₹4,00,000 - ₹6,00,000/year"
-                  name="salary"
+                  type="number"
+                  min="0"
+                  max="1000"
+                  step="0.1"
+                  placeholder="3.5 or 110 Lpa"
+                  name="minSalary"
                   onChange={handleChange}
-                  value={jobFormData.salary}
+                  value={jobFormData.minSalary}
                 />
-                {errors.salary && (
-                  <p className="text-danger">{errors.salary}</p>
+                {errors.minSalary && (
+                  <p className="text-danger">{errors.minSalary}</p>
+                )}
+              </div>
+              <div className="col-md-4 mb-2">
+                <label className="form-label">Maximum Salary*</label>
+                <Input
+                  ref={refs.maxSalary}
+                  className="form-control"
+                  type="number"
+                  min="0"
+                  max="1000"
+                  step="0.1"
+                  placeholder="3.5 or 110 Lpa"
+                  name="maxSalary"
+                  onChange={handleChange}
+                  value={jobFormData.maxSalary}
+                />
+                {errors.maxSalary && (
+                  <p className="text-danger">{errors.maxSalary}</p>
                 )}
               </div>
 

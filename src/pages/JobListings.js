@@ -4,15 +4,16 @@ import FrontendContext from "../context/FrontendContext";
 import Model from "./Model";
 import { getAllJobs, getPublicJobs } from "../Utils/frontendJobs";
 import { useActiveTooltipDataPoints } from "recharts";
-import { Helmet } from "react-helmet-async";
 
-const Check = () => {
+const JobListings = () => {
+  useEffect(() => {
+    document.title = "JobsAlgo | All Jobs";
+  }, []);
   const [showFilter, setShowFilter] = useState(false);
   const { isModalOpen, setIsModelOpen } = useContext(FrontendContext);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   // console.log("jobs:", jobs);
-
   const navigate = useNavigate();
 
   function handleCick(id) {
@@ -39,11 +40,28 @@ const Check = () => {
     fetchAllJobs();
   }, []);
 
+  // Helper function
+  const formatSalary = (min, max) => {
+    if (!min && !max) return "Not disclosed";
+
+    const formatValue = (value) => {
+      if (value >= 100) {
+        // Convert LPA to Cr
+        return `${(value / 100).toFixed(2)} Cr`;
+      }
+      return `${value} LPA`;
+    };
+
+    // If min & max are equal → show single value
+    if (min === max) {
+      return formatValue(max);
+    }
+
+    return `${formatValue(min)} - ${formatValue(max)}`;
+  };
+
   return (
     <>
-      <Helmet>
-        <title>JobsAlgo | All Jobs</title>
-      </Helmet>
       <div className="site-wrap">
         <div className="site-mobile-menu site-navbar-target">
           <div className="site-mobile-menu-header">
@@ -418,7 +436,7 @@ const Check = () => {
                         </div>
                         <div className="job-listing-location mb-1  w-25">
                           <span className=""></span>
-                          {job.salary} Inr/year
+                          {formatSalary(job.minSalary, job.maxSalary)}
                         </div>
                         <div className="job-listing-meta mb-4">
                           <span
@@ -479,4 +497,4 @@ const Check = () => {
   );
 };
 
-export default Check;
+export default JobListings;
