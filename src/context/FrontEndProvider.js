@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import FrontendContext from "./FrontendContext";
 import { getCurrentUser } from "../Hooks/getCurrentUser";
+import { getPublicJobs } from "../Utils/frontendJobs";
 
 const FrontEndProvider = ({ children }) => {
   const [token, setToken] = useState(
@@ -13,6 +14,8 @@ const FrontEndProvider = ({ children }) => {
   const [errors, setErrors] = useState({});
   const [notif, setNotif] = useState({ message: null, type: "" });
   const [isModelOpen, setIsModelOpen] = useState(false);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // signup
   const signup = useCallback((newUser, newToken) => {
@@ -55,21 +58,48 @@ const FrontEndProvider = ({ children }) => {
     setUser(null);
   }
 
-  const value = {
-    errors,
-    setErrors,
-    token,
-    setToken,
-    signup,
-    login,
-    user,
-    setUser,
-    handleLogout,
-    notif,
-    setNotif,
-    isModelOpen,
-    setIsModelOpen,
-  };
+  // get all jobs
+
+  useEffect(() => {
+    const fetchAllJobs = async () => {
+      try {
+        setLoading(true);
+        const res = await getPublicJobs();
+        if (res.success) {
+          setJobs(res.jobs);
+        }
+      } catch (error) {
+        console.log("Error fetching job:", error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllJobs();
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      errors,
+      setErrors,
+      token,
+      setToken,
+      signup,
+      login,
+      user,
+      setUser,
+      handleLogout,
+      notif,
+      setNotif,
+      isModelOpen,
+      setIsModelOpen,
+      jobs,
+      setJobs,
+      loading,
+      setLoading,
+    }),
+    [errors, token, user, notif, isModelOpen, jobs, loading]
+  );
 
   return (
     <div>

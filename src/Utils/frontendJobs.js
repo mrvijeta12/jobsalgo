@@ -49,7 +49,7 @@ export const getPublicJobs = async () => {
 //! get job by id (job description page)
 
 export const getPublicJobById = async (id) => {
-  console.log(id);
+  // console.log(id);
 
   try {
     const res = await axios.get(`${API_URL}/jobs/${id}`, {

@@ -1,17 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { getPublicJobById } from "../Utils/frontendJobs";
+import FrontendContext from "../context/FrontendContext";
+import Notification from "../admin/Components/Notification";
 
 const JobDescription = () => {
   useEffect(() => {
     document.title = "JobsAlgo | Job Description";
   }, []);
+
+  const { user, notif, setNotif } = useContext(FrontendContext);
+  // console.log(user);
+
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(false);
-  console.log(job);
 
   //capitalize
 
@@ -38,6 +44,12 @@ const JobDescription = () => {
   };
 
   useEffect(() => {
+    if (notif?.message) {
+      setNotif({ id: null, message: "", type: "" });
+    }
+  }, []);
+
+  useEffect(() => {
     const fetchJob = async () => {
       try {
         setLoading(true);
@@ -57,8 +69,34 @@ const JobDescription = () => {
     }
   }, [id]);
 
+  function handleClick() {
+    // console.log(Frontend_User);
+    if (!user) {
+      setNotif({ id: Date.now(), message: "Register First", type: "error" });
+      setTimeout(() => {
+        navigate("/login", {
+          state: { from: location },
+        });
+      }, 4000);
+      return;
+    }
+    setNotif({
+      id: Date.now(),
+      message: "You applied successfully",
+      type: "success",
+    });
+  }
+
   return (
     <>
+      {notif.message && (
+        <Notification
+          key={notif.id}
+          message={notif.message}
+          type={notif.type}
+        />
+      )}
+
       <div className="site-wrap">
         <div className="site-mobile-menu site-navbar-target">
           <div className="site-mobile-menu-header">
@@ -352,17 +390,18 @@ const JobDescription = () => {
                   </Link>
                 </div> */}
                   <div className="col-6">
-                    <Link
-                      to="#"
+                    <button
                       className="btn btn-block btn-primary btn-md"
                       style={{ fontWeight: "600" }}
+                      onClick={handleClick}
                     >
                       Apply Now
-                    </Link>
+                    </button>
                   </div>
                 </div>
               </div>
 
+              {/* Sidebar  */}
               <div className="col-lg-4">
                 <div
                   className="bg-light p-3 border rounded mb-4"

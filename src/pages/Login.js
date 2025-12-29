@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import FrontendContext from "../context/FrontendContext";
 import Notification from "../admin/Components/Notification.js";
@@ -13,9 +13,16 @@ const Login = React.memo(() => {
   //form state
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const from = location?.state?.from?.pathname || "/";
+
+  // page title
   useEffect(() => {
     document.title = `${isLogin ? "JobsAlgo | LogIn" : "JobsAlgo | SignUp"}`;
   }, [isLogin]);
+
   // import from context
   const { errors, setErrors, signup, login, notif, setNotif } =
     useContext(FrontendContext);
@@ -137,6 +144,9 @@ const Login = React.memo(() => {
         password: "",
         confirmPassword: "",
       });
+      setTimeout(() => {
+        navigate(from, { replace: true });
+      }, 4000);
     } catch (error) {
       console.log("Signup error:", error);
       const errorMsg =
@@ -180,6 +190,9 @@ const Login = React.memo(() => {
         email: "",
         password: "",
       });
+      setTimeout(() => {
+        navigate(from, { replace: true });
+      }, 4000);
     } catch (error) {
       console.log("Signup error:", error);
       const errorMsg =

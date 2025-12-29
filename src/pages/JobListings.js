@@ -10,35 +10,14 @@ const JobListings = () => {
     document.title = "JobsAlgo | All Jobs";
   }, []);
   const [showFilter, setShowFilter] = useState(false);
-  const { isModalOpen, setIsModelOpen } = useContext(FrontendContext);
-  const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { jobs, loading } = useContext(FrontendContext);
+
   // console.log("jobs:", jobs);
   const navigate = useNavigate();
 
   function handleCick(id) {
     navigate(`/job-description/${id}`);
   }
-
-  // get all jobs
-
-  useEffect(() => {
-    const fetchAllJobs = async () => {
-      try {
-        setLoading(true);
-        const res = await getPublicJobs();
-        if (res.success) {
-          setJobs(res.jobs);
-        }
-      } catch (error) {
-        console.log("Error fetching job:", error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAllJobs();
-  }, []);
 
   // Helper function
   const formatSalary = (min, max) => {
