@@ -6,6 +6,7 @@
 .pnp.js
 src/pages/PortfolioSingle.js
 src/pages/Portfolio.js
+.vscode/
 
 
 # testing

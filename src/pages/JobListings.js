@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import FrontendContext from "../context/FrontendContext";
 import Model from "./Model";
 import { getAllJobs, getPublicJobs } from "../Utils/frontendJobs";
@@ -11,18 +11,126 @@ const JobListings = () => {
   }, []);
   const [showFilter, setShowFilter] = useState(false);
   const { jobs, loading } = useContext(FrontendContext);
-
-  // console.log("jobs:", jobs);
   const navigate = useNavigate();
-
   function handleCick(id) {
     navigate(`/job-description/${id}`);
+  }
+
+  //filter and sort
+  const [filters, setFilters] = useState({
+    job_title: "",
+    job_type: [],
+    category: "",
+    location: "",
+    minSalary: null,
+    maxSalary: null,
+    experience: "",
+    posted_date: "",
+    work_mode: [],
+  });
+  const [sort, setSort] = useState("recent");
+  const [page, setPage] = useState(1);
+
+  function handleFilterChange(e) {
+    const { name, value, type, checked } = e.target;
+    setFilters((prev) => {
+      let updatedValue;
+
+      // for multiple checkbox
+      if (type === "checkbox" && Array.isArray(prev[name])) {
+        updatedValue = checked
+          ? [...prev[name], value]
+          : prev[name].filter((v) => v !== value);
+      }
+      // for single checkbox
+      else if (type === "checkbox") {
+        updatedValue = checked;
+      } else if (type === "number") {
+        updatedValue = value === "" ? "" : Math.max(0, Number(value));
+      } else if (name === "job_title") {
+        updatedValue = value.replace(/[^a-zA-Z0-9\s]/g, "");
+      }
+      // for input, radio , select etc
+      else {
+        updatedValue = value;
+      }
+
+      return {
+        ...prev,
+        [name]: updatedValue,
+      };
+    });
+    setPage(1);
+  }
+
+  const bindQuery = (filters) => {
+    const params = new URLSearchParams();
+
+    Object.entries(filters).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((v) => params.append(key, v));
+      } else if (value !== "" && value !== null && value !== undefined) {
+        params.append(key, value);
+      }
+    });
+    params.append("sort", sort);
+    params.append("page", page);
+
+    // console.log(params);
+
+    return params.toString();
+  };
+
+  // apply filters
+
+  // function applyFilter() {
+  //   const cleanedFilters = Object.fromEntries(
+  //     Object.entries(filters).filter(([_, value]) => {
+  //       if (Array.isArray(value)) return value.length > 0;
+  //       return value !== "" && value !== null && value !== undefined;
+  //     })
+  //   );
+
+  //   const query = bindQuery(cleanedFilters);
+  //   console.log(query);
+  // }
+  useEffect(() => {
+    const cleanedFilters = Object.fromEntries(
+      Object.entries(filters).filter(([_, value]) => {
+        if (Array.isArray(value)) return value.length > 0;
+        return value !== "" && value !== null && value !== undefined;
+      })
+    );
+
+    const query = bindQuery({
+      ...cleanedFilters,
+      sort,
+      page,
+    });
+
+    console.log(query);
+    getPublicJobs(query);
+  }, [filters, sort, page]);
+
+  // clear filters
+  function clearFilters() {
+    setFilters({
+      job_title: "",
+      job_type: [],
+      category: "",
+      location: "",
+      minSalary: null,
+      maxSalary: null,
+      experience: "",
+      posted_date: "",
+      work_mode: [],
+      page: 1,
+    });
   }
 
   // Helper function
   const formatSalary = (min, max) => {
     if (!min && !max) return "Not disclosed";
-
     const formatValue = (value) => {
       if (value >= 100) {
         // Convert LPA to Cr
@@ -30,12 +138,10 @@ const JobListings = () => {
       }
       return `${value} LPA`;
     };
-
     // If min & max are equal → show single value
     if (min === max) {
       return formatValue(max);
     }
-
     return `${formatValue(min)} - ${formatValue(max)}`;
   };
 
@@ -98,16 +204,30 @@ const JobListings = () => {
 
             {/* Example Filters */}
             <div className="mb-4">
+              <h6>Job Title</h6>
+              <input
+                className="form-control"
+                type="text"
+                name="job_title"
+                id="job_title"
+                value={filters.job_title}
+                onChange={handleFilterChange}
+              />
+            </div>
+            <div className="mb-4">
               <h6>Job Category</h6>
-              <select className="form-control">
-                <option>All Categories</option>
-                <option>Design</option>
-                <option>Development</option>
-                <option>Marketing</option>
-                <option>Sales</option>
-                <option>Finance</option>
-                <option>Human Resources</option>
-                <option>Customer Support</option>
+              <select
+                className="form-control"
+                placeholder="Job Title"
+                name="category"
+                value={filters.category}
+                onChange={handleFilterChange}
+              >
+                <option value="">All Categories</option>
+                <option value="IT">IT</option>
+                <option value="HR">Human Resources</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Sales">Sales</option>
               </select>
             </div>
 
@@ -119,6 +239,10 @@ const JobListings = () => {
                   className="form-check-input"
                   type="checkbox"
                   id="fulltime"
+                  name="job_type"
+                  value="Full-time"
+                  checked={filters.job_type.includes("Full-time")}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="fulltime">
                   Full Time
@@ -129,6 +253,10 @@ const JobListings = () => {
                   className="form-check-input"
                   type="checkbox"
                   id="parttime"
+                  name="job_type"
+                  value="Part-time"
+                  checked={filters.job_type.includes("Part-time")}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="parttime">
                   Part Time
@@ -139,16 +267,25 @@ const JobListings = () => {
                   className="form-check-input"
                   type="checkbox"
                   id="internship"
+                  name="job_type"
+                  value="Internship"
+                  checked={filters.job_type.includes("Internship")}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="internship">
                   Internship
                 </label>
               </div>
+
               <div className="form-check">
                 <input
                   className="form-check-input"
                   type="checkbox"
                   id="freelance"
+                  name="job_type"
+                  value="Contract"
+                  checked={filters.job_type.includes("Contract")}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="freelance">
                   Freelance / Contract
@@ -163,33 +300,56 @@ const JobListings = () => {
                 <input
                   className="form-check-input"
                   type="radio"
-                  name="exp"
                   id="entry"
+                  name="experience"
+                  value="0-1 years"
+                  checked={filters.experience === "0-1 years"}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="entry">
-                  Entry Level
+                  0-1 years
                 </label>
               </div>
               <div className="form-check">
                 <input
                   className="form-check-input"
                   type="radio"
-                  name="exp"
                   id="mid"
+                  name="experience"
+                  value="1-3 years"
+                  checked={filters.experience === "1-3 years"}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="mid">
-                  Mid Level
+                  1-3 years
                 </label>
               </div>
               <div className="form-check">
                 <input
                   className="form-check-input"
                   type="radio"
-                  name="exp"
                   id="senior"
+                  name="experience"
+                  value="3-5 years"
+                  checked={filters.experience === "3-5 years"}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="senior">
-                  Senior Level
+                  3-5 years
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  id="lead"
+                  name="experience"
+                  value="5+ years"
+                  checked={filters.experience === "5+ years"}
+                  onChange={handleFilterChange}
+                />
+                <label className="form-check-label" htmlFor="lead">
+                  5+ years
                 </label>
               </div>
             </div>
@@ -201,28 +361,85 @@ const JobListings = () => {
                 type="text"
                 className="form-control"
                 placeholder="City, State or Remote"
+                name="location"
+                value={filters.location}
+                onChange={handleFilterChange}
               />
-              <div className="form-check mt-2">
+              {/* <div className="form-check mt-2">
                 <input
                   className="form-check-input"
                   type="checkbox"
                   id="remote"
+                  name="remote"
+                  value="remote"
+                  checked={filters.remote}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="remote">
                   Remote Only
+                </label>
+              </div> */}
+            </div>
+            {/* Job Type */}
+            <div className="mb-4">
+              <h6>Work Mode</h6>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="onsite"
+                  name="work_mode"
+                  value="Onsite"
+                  checked={filters.work_mode.includes("Onsite")}
+                  onChange={handleFilterChange}
+                />
+                <label className="form-check-label" htmlFor="onsite">
+                  Onsite
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="remote"
+                  name="work_mode"
+                  value="Remote"
+                  checked={filters.work_mode.includes("Remote")}
+                  onChange={handleFilterChange}
+                />
+                <label className="form-check-label" htmlFor="remote">
+                  Remote
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  className="form-check-input"
+                  type="checkbox"
+                  id="hybrid"
+                  name="work_mode"
+                  value="Hybrid"
+                  checked={filters.work_mode.includes("Hybrid")}
+                  onChange={handleFilterChange}
+                />
+                <label className="form-check-label" htmlFor="hybrid">
+                  Hybrid
                 </label>
               </div>
             </div>
 
             {/* Salary Range */}
             <div className="mb-4">
-              <h6>Salary Range</h6>
+              <h6>Salary Range (LPA)</h6>
               <div className="d-flex align-items-center gap-2">
                 <input
                   type="number"
                   className="form-control"
                   placeholder="Min"
                   style={{ maxWidth: "100px" }}
+                  name="minSalary"
+                  value={filters.minSalary ?? ""}
+                  onChange={handleFilterChange}
+                  min={0}
                 />
                 <span className="px-2">-</span>
                 <input
@@ -230,6 +447,10 @@ const JobListings = () => {
                   className="form-control"
                   placeholder="Max"
                   style={{ maxWidth: "100px" }}
+                  name="maxSalary"
+                  value={filters.maxSalary ?? ""}
+                  onChange={handleFilterChange}
+                  min={0}
                 />
               </div>
             </div>
@@ -241,8 +462,11 @@ const JobListings = () => {
                 <input
                   className="form-check-input"
                   type="radio"
-                  name="date"
                   id="today"
+                  name="posted_date"
+                  value="today"
+                  checked={filters.posted_date === "today"}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="today">
                   Today
@@ -252,8 +476,11 @@ const JobListings = () => {
                 <input
                   className="form-check-input"
                   type="radio"
-                  name="date"
                   id="3days"
+                  name="posted_date"
+                  value="3days"
+                  checked={filters.posted_date === "3days"}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="3days">
                   Last 3 Days
@@ -263,8 +490,11 @@ const JobListings = () => {
                 <input
                   className="form-check-input"
                   type="radio"
-                  name="date"
                   id="7days"
+                  name="posted_date"
+                  value="7days"
+                  checked={filters.posted_date === "7days"}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="7days">
                   Last 7 Days
@@ -274,8 +504,11 @@ const JobListings = () => {
                 <input
                   className="form-check-input"
                   type="radio"
-                  name="date"
                   id="30days"
+                  name="posted_date"
+                  value="30days"
+                  checked={filters.posted_date === "30days"}
+                  onChange={handleFilterChange}
                 />
                 <label className="form-check-label" htmlFor="30days">
                   Last 30 Days
@@ -284,39 +517,51 @@ const JobListings = () => {
             </div>
 
             {/* Company */}
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <h6>Company</h6>
               <input
                 type="text"
                 className="form-control"
                 placeholder="Search company"
+                name="company"
+                value={filters.company}
+                onChange={handleFilterChange}
               />
-            </div>
+            </div> */}
 
             {/* Industry */}
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <h6>Industry</h6>
-              <select className="form-control">
+              <select
+                className="form-control"
+                name="industry"
+                value={filters.industry}
+                onChange={handleFilterChange}
+              >
                 <option>All Industries</option>
-                <option>IT & Software</option>
+                <option >IT & Software</option>
                 <option>Healthcare</option>
                 <option>Finance</option>
                 <option>Education</option>
                 <option>Retail</option>
                 <option>Manufacturing</option>
               </select>
-            </div>
+            </div> */}
 
             {/* Apply Filters Button */}
             <button
               className="btn btn-success text-white w-100 mt-3"
               style={{ fontWeight: "600" }}
+              type="button"
+              // onClick={applyFilter}
             >
               Apply Filters
             </button>
             <button
               className="btn btn-success text-white w-100 mt-3"
               style={{ fontWeight: "600" }}
+              type="button"
+              onClick={clearFilters}
             >
               Clear Filters
             </button>
@@ -358,15 +603,17 @@ const JobListings = () => {
                     >
                       <span>Sort by</span>
                       <select
-                        name="select "
+                        name=""
                         style={{
                           background: "transparent",
                           padding: "2px",
-                          // border: "1px solid #ccc",
+                        }}
+                        onChange={(e) => {
+                          setSort(e.target.value);
+                          setPage(1);
                         }}
                       >
                         <option value="recent">Most Recent</option>
-
                         <option value="relevance">Relevance</option>
                         <option value="salary_desc">Salary: High to Low</option>
                         <option value="salary_asc">Salary: Low to High</option>

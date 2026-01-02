@@ -565,7 +565,6 @@ const AddNewJob = () => {
                   <option value="Full-time">Full-time</option>
                   <option value="Part-time">Part-time</option>
                   <option value="Internship">Internship</option>
-                  <option value="Remote">Remote</option>
                   <option value="Contract">Contract</option>
                 </select>
                 {errors.job_type && (
