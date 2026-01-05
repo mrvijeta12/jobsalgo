@@ -26,9 +26,9 @@ export const postFrontendJob = async (credentials, token, id) => {
 
 //! get all jobs (job listings page)
 
-export const getPublicJobs = async () => {
+export const getPublicJobs = async (query) => {
   try {
-    const res = await axios.get(`${API_URL}/jobs`, {
+    const res = await axios.get(`${API_URL}/jobs?${query}`, {
       headers: {
         "Content-Type": "application/json",
       },

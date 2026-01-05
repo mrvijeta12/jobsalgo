@@ -11,7 +11,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import SkillsInput from "../Components/SkillsInput";
 
 const EditJob = () => {
-  const { errors, setErrors, token, setNotif, notif, company } =
+  const { errors, setErrors, token, setNotif, notif, company, setRefreshJob } =
     useContext(AdminContext);
   const [loading, setLoading] = useState(false);
   const [searchParams] = useSearchParams();
@@ -307,6 +307,7 @@ const EditJob = () => {
         message: res.message || "Job custom updated successfully",
         type: "success",
       });
+      setRefreshJob(true);
       setJobFormData({
         job_title: "",
         job_type: "",

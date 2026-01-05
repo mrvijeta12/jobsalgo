@@ -8,9 +8,14 @@ const SkillsInput = React.forwardRef((props, ref) => {
 
   const addSkill = () => {
     const skill = input.trim();
-    if (skill && !value.includes(skill.toLowerCase())) {
-      onChange([...value.map((s) => s.toLowerCase()), skill.toLowerCase()]);
+    if (!skill) return;
+
+    const exists = value.some((s) => s.toLowerCase() === skill.toLowerCase());
+
+    if (!exists) {
+      onChange([...value, skill]); // store original casing
     }
+
     setInput("");
   };
 

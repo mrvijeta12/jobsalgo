@@ -181,10 +181,12 @@ const JobDescription = () => {
                       </span>
                       <span className="m-2">
                         <span className="icon-room mr-2"></span>
-                        {(job.location || job.work_mode)
-                          ?.charAt(0)
-                          .toUpperCase() +
-                          (job.location || job.work_mode)?.slice(1)}
+                        {capitalize(
+                          job.location ||
+                            (Array.isArray(job.work_mode)
+                              ? job.work_mode[0]
+                              : job.work_mode)
+                        )}
                       </span>
                       <span className="m-2">
                         <span className="icon-clock-o mr-2"></span>

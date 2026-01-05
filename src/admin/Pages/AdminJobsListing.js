@@ -23,7 +23,7 @@ const AdminJobsListing = () => {
     setLoading,
     fetchAllJobs,
   } = useContext(AdminContext);
-  // console.log(jobData);
+  console.log(allJobs);
 
   // useContext(() => {
   //   if (allJobs.length === 0) {

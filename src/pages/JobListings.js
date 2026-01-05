@@ -9,124 +9,20 @@ const JobListings = () => {
   useEffect(() => {
     document.title = "JobsAlgo | All Jobs";
   }, []);
-  const [showFilter, setShowFilter] = useState(false);
-  const { jobs, loading } = useContext(FrontendContext);
+  const {
+    jobs,
+    loading,
+    applyFilter,
+    clearFilters,
+    handleFilterChange,
+    setSort,
+    setPage,
+    filters,
+    handleCick,
+  } = useContext(FrontendContext);
   const navigate = useNavigate();
-  function handleCick(id) {
-    navigate(`/job-description/${id}`);
-  }
-
-  //filter and sort
-  const [filters, setFilters] = useState({
-    job_title: "",
-    job_type: [],
-    category: "",
-    location: "",
-    minSalary: null,
-    maxSalary: null,
-    experience: "",
-    posted_date: "",
-    work_mode: [],
-  });
-  const [sort, setSort] = useState("recent");
-  const [page, setPage] = useState(1);
-
-  function handleFilterChange(e) {
-    const { name, value, type, checked } = e.target;
-    setFilters((prev) => {
-      let updatedValue;
-
-      // for multiple checkbox
-      if (type === "checkbox" && Array.isArray(prev[name])) {
-        updatedValue = checked
-          ? [...prev[name], value]
-          : prev[name].filter((v) => v !== value);
-      }
-      // for single checkbox
-      else if (type === "checkbox") {
-        updatedValue = checked;
-      } else if (type === "number") {
-        updatedValue = value === "" ? "" : Math.max(0, Number(value));
-      } else if (name === "job_title") {
-        updatedValue = value.replace(/[^a-zA-Z0-9\s]/g, "");
-      }
-      // for input, radio , select etc
-      else {
-        updatedValue = value;
-      }
-
-      return {
-        ...prev,
-        [name]: updatedValue,
-      };
-    });
-    setPage(1);
-  }
-
-  const bindQuery = (filters) => {
-    const params = new URLSearchParams();
-
-    Object.entries(filters).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach((v) => params.append(key, v));
-      } else if (value !== "" && value !== null && value !== undefined) {
-        params.append(key, value);
-      }
-    });
-    params.append("sort", sort);
-    params.append("page", page);
-
-    // console.log(params);
-
-    return params.toString();
-  };
-
-  // apply filters
-
-  // function applyFilter() {
-  //   const cleanedFilters = Object.fromEntries(
-  //     Object.entries(filters).filter(([_, value]) => {
-  //       if (Array.isArray(value)) return value.length > 0;
-  //       return value !== "" && value !== null && value !== undefined;
-  //     })
-  //   );
-
-  //   const query = bindQuery(cleanedFilters);
-  //   console.log(query);
-  // }
-  useEffect(() => {
-    const cleanedFilters = Object.fromEntries(
-      Object.entries(filters).filter(([_, value]) => {
-        if (Array.isArray(value)) return value.length > 0;
-        return value !== "" && value !== null && value !== undefined;
-      })
-    );
-
-    const query = bindQuery({
-      ...cleanedFilters,
-      sort,
-      page,
-    });
-
-    console.log(query);
-    getPublicJobs(query);
-  }, [filters, sort, page]);
-
-  // clear filters
-  function clearFilters() {
-    setFilters({
-      job_title: "",
-      job_type: [],
-      category: "",
-      location: "",
-      minSalary: null,
-      maxSalary: null,
-      experience: "",
-      posted_date: "",
-      work_mode: [],
-      page: 1,
-    });
-  }
+  const [showFilter, setShowFilter] = useState(false);
+  console.log(jobs.length);
 
   // Helper function
   const formatSalary = (min, max) => {
@@ -143,6 +39,12 @@ const JobListings = () => {
       return formatValue(max);
     }
     return `${formatValue(min)} - ${formatValue(max)}`;
+  };
+
+  const capitalize = (text) => {
+    // console.log(text);
+
+    return text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
   };
 
   return (
@@ -210,7 +112,7 @@ const JobListings = () => {
                 type="text"
                 name="job_title"
                 id="job_title"
-                value={filters.job_title}
+                value={filters.job_title || ""}
                 onChange={handleFilterChange}
               />
             </div>
@@ -553,7 +455,7 @@ const JobListings = () => {
               className="btn btn-success text-white w-100 mt-3"
               style={{ fontWeight: "600" }}
               type="button"
-              // onClick={applyFilter}
+              onClick={applyFilter}
             >
               Apply Filters
             </button>
@@ -631,6 +533,8 @@ const JobListings = () => {
               <ul className=" mb-lg-5 mt-3  job-listings ">
                 {jobs.length > 0 &&
                   jobs.map((job) => (
+                    // console.log(job)
+
                     <li
                       className="job-listing d-block d-md-flex pb-3 pb-sm-0 align-items-center"
                       onClick={() => handleCick(job._id)}
@@ -641,6 +545,7 @@ const JobListings = () => {
                         <img
                           src={job.createdBy?.company_logo}
                           alt={job.createdBy?.company_name}
+                          // style={{ width: "150px", height: "150px" }}
                           className="img-fluid"
                         />
                       </div>
@@ -648,17 +553,20 @@ const JobListings = () => {
                       <div className="job-listing-about d-md-flex  w-100 justify-content-between mx-3">
                         <div className="job-listing-position w-50 mb-1 mb-sm-0">
                           <h2 style={{ fontSize: "18px" }}>
-                            {job.job_title?.charAt(0).toUpperCase() +
-                              job.job_title?.slice(1)}
+                            {/* {job.job_title?.charAt(0).toUpperCase() +
+                              job.job_title?.slice(1)} */}
+                            {capitalize(job.job_title)}
                           </h2>
                           <strong>{job.createdBy?.company_name}</strong>
                         </div>
                         <div className="job-listing-location mb-1 mb-sm-0  w-25">
-                          <span className="icon-room"></span>{" "}
-                          {(job.location || job.work_mode)
-                            ?.charAt(0)
-                            .toUpperCase() +
-                            (job.location || job.work_mode)?.slice(1)}
+                          <span className="icon-room"></span>
+                          {capitalize(
+                            job.location ||
+                              (Array.isArray(job.work_mode)
+                                ? job.work_mode[0]
+                                : job.work_mode)
+                          )}
                         </div>
                         <div className="job-listing-location mb-1  w-25">
                           <span className=""></span>
